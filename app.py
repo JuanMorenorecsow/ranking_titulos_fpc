@@ -10,13 +10,13 @@ st.set_page_config(page_title="Ranking por Títulos del FPC", page_icon="🏆", 
 # TORNEOS: (nombre, organizador, archivo de imagen en /imagenes)
 # ---------------------------------------------------------------
 TORNEOS = [
-    ("Liga Anual",          "FPC · DIMAYOR", "liga_anual.png"),
-    ("Liga Semestral",      "FPC · DIMAYOR", "liga_semestral.png"),
-    ("Copa Colombia",       "FPC · DIMAYOR", "copa_colombia.png"),
-    ("Superliga",           "FPC · DIMAYOR", "superliga.png"),
-    ("Copa Libertadores",   "CONMEBOL",      "libertadores.png"),
-    ("Copa Sudamericana",   "CONMEBOL",      "sudamericana.png"),
-    ("Recopa Sudamericana", "CONMEBOL",      "recopa.png"),
+    ("Liga Anual",          "FPC · DIMAYOR", "liga_anual.png", "Temporadas 1948 – 2001"),
+    ("Liga Semestral",      "FPC · DIMAYOR", "liga_semestral.png", "Temporadas 2002 – presente"),
+    ("Copa Colombia",       "FPC · DIMAYOR", "copa_colombia.png", ""),
+    ("Superliga",           "FPC · DIMAYOR", "superliga.png", ""),
+    ("Copa Libertadores",   "CONMEBOL",      "libertadores.png", ""),
+    ("Copa Sudamericana",   "CONMEBOL",      "sudamericana.png", ""),
+    ("Recopa Sudamericana", "CONMEBOL",      "recopa.png", ""),
 ]
 CARPETA_IMG = "imagenes"
 NOMBRES = [t[0] for t in TORNEOS]
@@ -89,6 +89,9 @@ st.markdown("""
          font-size:3.4rem; line-height:1.05; text-transform:uppercase; color:#fff; margin:.3rem 0 .2rem;}
 .titulo span {background:linear-gradient(180deg,#f3d77a,#b8932f); -webkit-background-clip:text;
               -webkit-text-fill-color:transparent;}
+.periodo {text-align:center; color:#f3d77a; font-size:.8rem; letter-spacing:.25em; text-transform:uppercase;
+          border:1px solid #c9a43a66; border-radius:999px; padding:6px 18px; width:fit-content;
+          margin:-.6rem auto 1.2rem; background:#c9a43a14;}
 .linea {width:110px; height:1px; background:#c9a43a88; margin:.4rem auto 1.4rem;}
 .progreso {text-align:center; color:#8b93a8; font-size:.8rem; letter-spacing:.2em; margin-bottom:.6rem;}
 .instruccion {text-align:center; font-weight:500; margin:1.2rem 0 .6rem;}
@@ -151,10 +154,12 @@ def encabezado(sub, texto):
 # ---------------------------------------------------------------
 if st.session_state.paso < len(TORNEOS):
     i = st.session_state.paso
-    nombre, organizador, archivo = TORNEOS[i]
+    nombre, organizador, archivo, periodo = TORNEOS[i]
 
     st.markdown(f'<div class="progreso">{i + 1} / {len(TORNEOS)}</div>', unsafe_allow_html=True)
     encabezado(organizador, nombre)
+    if periodo:
+        st.markdown(f'<div class="periodo">{periodo}</div>', unsafe_allow_html=True)
 
     _, centro, _ = st.columns([1, 1.6, 1])
     with centro:
