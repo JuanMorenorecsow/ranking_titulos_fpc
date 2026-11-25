@@ -1,4 +1,6 @@
 import os
+import unicodedata
+from pathlib import Path
 import pandas as pd
 import streamlit as st
 
@@ -22,23 +24,32 @@ EXTENSIONES = (".png", ".jpg", ".jpeg", ".webp")
 
 
 def buscar_imagen(archivo):
-    """Busca la imagen ignorando mayúsculas, extensión y extensiones dobles (.png.png)."""
+    """Busca la imagen sin importar mayúsculas, extensión doble o ubicación de la carpeta."""
     base = archivo.lower()
     for ext in EXTENSIONES:
         if base.endswith(ext):
             base = base[: -len(ext)]
-    if not os.path.isdir(CARPETA_IMG):
-        return None
-    for f in os.listdir(CARPETA_IMG):
-        nombre = f.lower()
-        while nombre.endswith(EXTENSIONES):
-            for ext in EXTENSIONES:
-                if nombre.endswith(ext):
-                    nombre = nombre[: -len(ext)]
-                    break
-        if nombre == base:
-            return os.path.join(CARPETA_IMG, f)
+
+    raiz = Path(__file__).resolve().parent
+    # Busca la carpeta "imagenes" (cualquier mayúscula/acento) o, si no existe, usa la raíz
+    carpetas = [raiz] + [
+        d for d in raiz.iterdir()
+        if d.is_dir() and unicodedata.normalize("NFKD", d.name).encode("ascii", "ignore").decode().lower() == "imagenes"
+    ]
+    for carpeta in carpetas:
+        for f in carpeta.iterdir():
+            if not f.is_file():
+                continue
+            nombre = f.name.lower()
+            while nombre.endswith(EXTENSIONES):
+                for ext in EXTENSIONES:
+                    if nombre.endswith(ext):
+                        nombre = nombre[: -len(ext)]
+                        break
+            if nombre == base:
+                return str(f)
     return None
+
 
 # ---------------------------------------------------------------
 # DATOS: títulos por equipo, en el mismo orden de TORNEOS.
