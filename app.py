@@ -89,6 +89,10 @@ st.markdown("""
          font-size:3.4rem; line-height:1.05; text-transform:uppercase; color:#fff; margin:.3rem 0 .2rem;}
 .titulo span {background:linear-gradient(180deg,#f3d77a,#b8932f); -webkit-background-clip:text;
               -webkit-text-fill-color:transparent;}
+.portada {min-height:62vh; display:flex; flex-direction:column; justify-content:center; padding-top:2rem;}
+.portada .titulo {font-size:3.6rem; line-height:1.02; margin:1rem 0;}
+.portada .copa {text-align:center; font-size:3.4rem; margin-bottom:.4rem;}
+.portada .sub {text-align:center; color:#a9b1c6; font-size:1rem; max-width:460px; margin:.4rem auto 2rem;}
 .periodo {text-align:center; color:#f3d77a; font-size:.8rem; letter-spacing:.25em; text-transform:uppercase;
           border:1px solid #c9a43a66; border-radius:999px; padding:6px 18px; width:fit-content;
           margin:-.6rem auto 1.2rem; background:#c9a43a14;}
@@ -132,7 +136,7 @@ st.markdown("""
 # ESTADO
 # ---------------------------------------------------------------
 if "paso" not in st.session_state:
-    st.session_state.paso = 0
+    st.session_state.paso = -1
     st.session_state.pesos = {}
 
 
@@ -152,7 +156,24 @@ def encabezado(sub, texto):
 # ---------------------------------------------------------------
 # PREGUNTAS (una copa por pantalla)
 # ---------------------------------------------------------------
-if st.session_state.paso < len(TORNEOS):
+if st.session_state.paso == -1:
+    st.markdown(
+        '''<div class="portada">
+            <div class="copa">🏆</div>
+            <div class="eyebrow">FPC · DIMAYOR</div>
+            <div class="titulo">¿Cuál es el orden de los <span>equipos más grandes</span> del FPC?</div>
+            <div class="linea"></div>
+            <div class="sub">Dale un valor del 1 al 10 a cada copa y descubre el ranking según tu criterio.</div>
+        </div>''',
+        unsafe_allow_html=True,
+    )
+    _, centro, _ = st.columns([1, 1.4, 1])
+    with centro:
+        if st.button("Comenzar", key="comenzar"):
+            st.session_state.paso = 0
+            st.rerun()
+
+elif st.session_state.paso < len(TORNEOS):
     i = st.session_state.paso
     nombre, organizador, archivo, periodo = TORNEOS[i]
 
@@ -188,7 +209,7 @@ if st.session_state.paso < len(TORNEOS):
                 st.session_state.paso += 1
                 st.rerun()
 
-        if i > 0 and st.button("← Anterior", key=f"atras_{i}"):
+        if st.button("← Anterior", key=f"atras_{i}"):
             st.session_state.paso -= 1
             st.rerun()
 
@@ -213,6 +234,6 @@ else:
 
     st.write("")
     if st.button("Volver a empezar"):
-        st.session_state.paso = 0
+        st.session_state.paso = -1
         st.session_state.pesos = {}
         st.rerun()
