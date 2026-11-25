@@ -127,7 +127,7 @@ st.markdown("""
 .fila.top {border-color:#c9a43a; box-shadow:0 0 24px #c9a43a33;}
 .puesto {font-family:'Barlow Condensed',sans-serif; font-size:2rem; font-weight:800; color:#c9a43a; width:46px;}
 .equipo {flex:1; font-weight:700; font-size:1.05rem;}
-.tabla-wrap {overflow-x:auto; margin-top:1.6rem; border:1px solid #c9a43a33; border-radius:14px; background:#0a1226cc;}
+.tabla-wrap {overflow-x:auto; margin-top:.5rem; border:1px solid #c9a43a33; border-radius:14px; background:#0a1226cc;}
 .tabla-wrap h4 {margin:0; padding:14px 18px 0; font-family:'Barlow Condensed',sans-serif; font-size:1.5rem; color:#f3d77a; letter-spacing:.05em;}
 table.detalle {border-collapse:collapse; width:100%; font-size:.9rem; margin-top:.6rem;}
 table.detalle th {color:#c9a43a; font-weight:700; text-align:center; padding:10px 12px; border-bottom:1px solid #c9a43a55; white-space:nowrap;}
@@ -135,7 +135,10 @@ table.detalle th small {display:block; color:#8b93a8; font-weight:400; letter-sp
 table.detalle td {text-align:center; padding:10px 12px; border-bottom:1px solid #ffffff10; white-space:nowrap;}
 table.detalle td:first-child, table.detalle th:first-child {text-align:left; font-weight:700; position:sticky; left:0; background:#0a1226;}
 table.detalle td.cero {color:#5b6379;}
-table.detalle td.total {color:#f3d77a; font-weight:700;}
+table.detalle td.total {color:#f3d77a; font-weight:800; font-size:1.15rem; font-family:'Barlow Condensed',sans-serif;}
+table.detalle .pos {display:inline-block; width:2rem; color:#c9a43a; font-family:'Barlow Condensed',sans-serif; font-size:1.3rem; font-weight:800;}
+table.detalle tr.top td {background:#c9a43a12;}
+table.detalle tr.top td:first-child {box-shadow: inset 3px 0 0 #c9a43a;}
 .pts {font-family:'Barlow Condensed',sans-serif; font-size:1.6rem; font-weight:700; color:#f3d77a;}
 .pts small {font-size:.7rem; color:#8b93a8; letter-spacing:.15em;}
 </style>
@@ -226,42 +229,34 @@ elif st.session_state.paso < len(TORNEOS):
 # RESULTADO
 # ---------------------------------------------------------------
 else:
+    st.markdown("<style>.block-container {max-width: 1100px;}</style>", unsafe_allow_html=True)
     encabezado("FPC", "Ranking por Títulos")
 
+    pesos = st.session_state.pesos
     df = pd.DataFrame(DATOS, index=NOMBRES).T
-    df["Puntos"] = sum(df[t] * p for t, p in st.session_state.pesos.items())
+    df["Puntos"] = sum(df[t] * p for t, p in pesos.items())
     df = df.sort_values("Puntos", ascending=False).reset_index(names="Equipo")
 
-    for n, f in df.iterrows():
-        clase = "fila top" if n < 3 else "fila"
-        st.markdown(
-            f'<div class="{clase}"><div class="puesto">{n + 1}</div>'
-            f'<div class="equipo">{f["Equipo"]}</div>'
-            f'<div class="pts">{int(f["Puntos"])} <small>PTS</small></div></div>',
-            unsafe_allow_html=True,
-        )
-
-    # Tabla de detalle: Títulos (Puntos) por copa
-    pesos = st.session_state.pesos
+    # Una sola lista: Equipo | Puntos | Títulos (Puntos) por cada copa
     encabezados = "".join(
         f"<th>{n}<small>TÍTULOS (PUNTOS)</small></th>" for n in NOMBRES
     )
     filas = ""
-    for _, f in df.iterrows():
+    for n, f in df.iterrows():
+        clase_fila = ' class="top"' if n < 3 else ""
         celdas = ""
-        for n in NOMBRES:
-            t = int(f[n])
+        for c in NOMBRES:
+            t = int(f[c])
             clase = ' class="cero"' if t == 0 else ""
-            celdas += f"<td{clase}>{t} ({t * pesos[n]})</td>"
-        total_t = int(sum(f[n] for n in NOMBRES))
+            celdas += f"<td{clase}>{t} ({t * pesos[c]})</td>"
         filas += (
-            f"<tr><td>{f['Equipo']}</td>{celdas}"
-            f"<td class='total'>{total_t} ({int(f['Puntos'])})</td></tr>"
+            f"<tr{clase_fila}><td><span class='pos'>{n + 1}</span>{f['Equipo']}</td>"
+            f"<td class='total'>{int(f['Puntos'])}</td>{celdas}</tr>"
         )
     st.markdown(
-        f'''<div class="tabla-wrap"><h4>Detalle por copa</h4>
-        <table class="detalle"><thead><tr><th>Equipo</th>{encabezados}
-        <th>Total<small>TÍTULOS (PUNTOS)</small></th></tr></thead>
+        f'''<div class="tabla-wrap">
+        <table class="detalle"><thead><tr><th>Equipo</th>
+        <th>Puntos<small>TOTAL</small></th>{encabezados}</tr></thead>
         <tbody>{filas}</tbody></table></div>''',
         unsafe_allow_html=True,
     )
