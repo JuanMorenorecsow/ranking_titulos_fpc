@@ -127,6 +127,15 @@ st.markdown("""
 .fila.top {border-color:#c9a43a; box-shadow:0 0 24px #c9a43a33;}
 .puesto {font-family:'Barlow Condensed',sans-serif; font-size:2rem; font-weight:800; color:#c9a43a; width:46px;}
 .equipo {flex:1; font-weight:700; font-size:1.05rem;}
+.tabla-wrap {overflow-x:auto; margin-top:1.6rem; border:1px solid #c9a43a33; border-radius:14px; background:#0a1226cc;}
+.tabla-wrap h4 {margin:0; padding:14px 18px 0; font-family:'Barlow Condensed',sans-serif; font-size:1.5rem; color:#f3d77a; letter-spacing:.05em;}
+table.detalle {border-collapse:collapse; width:100%; font-size:.9rem; margin-top:.6rem;}
+table.detalle th {color:#c9a43a; font-weight:700; text-align:center; padding:10px 12px; border-bottom:1px solid #c9a43a55; white-space:nowrap;}
+table.detalle th small {display:block; color:#8b93a8; font-weight:400; letter-spacing:.08em; font-size:.65rem; margin-top:2px;}
+table.detalle td {text-align:center; padding:10px 12px; border-bottom:1px solid #ffffff10; white-space:nowrap;}
+table.detalle td:first-child, table.detalle th:first-child {text-align:left; font-weight:700; position:sticky; left:0; background:#0a1226;}
+table.detalle td.cero {color:#5b6379;}
+table.detalle td.total {color:#f3d77a; font-weight:700;}
 .pts {font-family:'Barlow Condensed',sans-serif; font-size:1.6rem; font-weight:700; color:#f3d77a;}
 .pts small {font-size:.7rem; color:#8b93a8; letter-spacing:.15em;}
 </style>
@@ -231,6 +240,31 @@ else:
             f'<div class="pts">{int(f["Puntos"])} <small>PTS</small></div></div>',
             unsafe_allow_html=True,
         )
+
+    # Tabla de detalle: Títulos (Puntos) por copa
+    pesos = st.session_state.pesos
+    encabezados = "".join(
+        f"<th>{n}<small>TÍTULOS (PUNTOS)</small></th>" for n in NOMBRES
+    )
+    filas = ""
+    for _, f in df.iterrows():
+        celdas = ""
+        for n in NOMBRES:
+            t = int(f[n])
+            clase = ' class="cero"' if t == 0 else ""
+            celdas += f"<td{clase}>{t} ({t * pesos[n]})</td>"
+        total_t = int(sum(f[n] for n in NOMBRES))
+        filas += (
+            f"<tr><td>{f['Equipo']}</td>{celdas}"
+            f"<td class='total'>{total_t} ({int(f['Puntos'])})</td></tr>"
+        )
+    st.markdown(
+        f'''<div class="tabla-wrap"><h4>Detalle por copa</h4>
+        <table class="detalle"><thead><tr><th>Equipo</th>{encabezados}
+        <th>Total<small>TÍTULOS (PUNTOS)</small></th></tr></thead>
+        <tbody>{filas}</tbody></table></div>''',
+        unsafe_allow_html=True,
+    )
 
     st.write("")
     if st.button("Volver a empezar"):
