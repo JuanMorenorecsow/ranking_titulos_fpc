@@ -99,6 +99,9 @@ st.markdown("""
 .linea {width:110px; height:1px; background:#c9a43a88; margin:.4rem auto 1.4rem;}
 .ejemplos {text-align:center; color:#8b93a8; font-size:.8rem; margin:-.2rem 0 .8rem;}
 .ejemplos b {color:#f3d77a;}
+.ejemplos div {line-height:1.6;}
+.ej-titulo {display:block; color:#c9a43a; letter-spacing:.25em; text-transform:uppercase; font-size:.7rem; margin-bottom:.2rem;}
+.ej-rango {margin-top:.3rem; font-size:.72rem; color:#6f7790;}
 .caja-base {height:3rem; display:flex; align-items:center; justify-content:center; border:1px solid #c9a43a66;
             border-radius:10px; background:#0a1226; color:#f3d77a; font-weight:700;}
 /* botones de la fila del formulario: siempre en una sola fila */
@@ -232,8 +235,11 @@ elif st.session_state.paso < len(TORNEOS):
     else:
         st.markdown(
             f'<div class="instruccion">¿Cuántas Ligas Semestrales vale la <b>{nombre}</b>?</div>'
-            '<div class="ejemplos">Ejemplos: <b>0,5</b> = media Liga Semestral · <b>1</b> = igual que una · '
-            '<b>3</b> = tres Ligas Semestrales · rango de 0,1 a 10</div>',
+            '<div class="ejemplos"><span class="ej-titulo">Ejemplos</span>'
+            '<div><b>0,5</b> = media Liga Semestral</div>'
+            '<div><b>1</b> = igual a una Liga Semestral</div>'
+            '<div><b>3</b> = tres Ligas Semestrales</div>'
+            '<div class="ej-rango">Rango permitido: de 0,1 a 10</div></div>',
             unsafe_allow_html=True,
         )
 
