@@ -97,6 +97,19 @@ st.markdown("""
           border:1px solid #c9a43a66; border-radius:999px; padding:6px 18px; width:fit-content;
           margin:-.6rem auto 1.2rem; background:#c9a43a14;}
 .linea {width:110px; height:1px; background:#c9a43a88; margin:.4rem auto 1.4rem;}
+.ejemplos {text-align:center; color:#8b93a8; font-size:.8rem; margin:-.2rem 0 .8rem;}
+.ejemplos b {color:#f3d77a;}
+.caja-base {height:3rem; display:flex; align-items:center; justify-content:center; border:1px solid #c9a43a66;
+            border-radius:10px; background:#0a1226; color:#f3d77a; font-weight:700;}
+/* botones de la fila del formulario: siempre en una sola fila */
+[data-testid="stForm"] [data-testid="stHorizontalBlock"] {flex-direction:row !important; flex-wrap:nowrap !important; gap:.6rem;}
+[data-testid="stForm"] [data-testid="stColumn"] {min-width:0 !important; flex:1 1 0 !important; width:auto !important;}
+[data-testid="stForm"] [data-testid="stColumn"]:first-child button {
+    background:transparent; color:#f3d77a; border:1px solid #c9a43a99; box-shadow:none;}
+[data-testid="stForm"] button {letter-spacing:.1em; font-size:.8rem; padding:0 .4rem;}
+[data-testid="stTextInput"] input {background:#0a1226; color:#fff; border:1px solid #c9a43a66;
+    border-radius:10px; text-align:center; height:3rem;}
+.stButton, [data-testid="stFormSubmitButton"] {width:100% !important;}
 .progreso {text-align:center; color:#8b93a8; font-size:.8rem; letter-spacing:.2em; margin-bottom:.6rem;}
 .instruccion {text-align:center; font-weight:500; margin:1.2rem 0 .6rem;}
 .placeholder {height:360px; border-radius:20px; border:1px dashed #c9a43a66; display:flex;
@@ -152,6 +165,20 @@ if "paso" not in st.session_state:
     st.session_state.pesos = {}
 
 
+def fmt(x):
+    """Número con coma decimal y sin ceros sobrantes: 2.5 -> '2,5', 3.0 -> '3'."""
+    x = round(float(x), 2)
+    return f"{x:.2f}".rstrip("0").rstrip(".").replace(".", ",")
+
+
+def leer_numero(texto):
+    """Acepta '0,5' o '0.5'. Devuelve None si no es un número válido."""
+    try:
+        return round(float(texto.strip().replace(",", ".")), 2)
+    except ValueError:
+        return None
+
+
 def titulo_html(texto):
     palabras = texto.split()
     if len(palabras) == 1:
@@ -175,11 +202,11 @@ if st.session_state.paso == -1:
             <div class="eyebrow">FPC · DIMAYOR</div>
             <div class="titulo">¿Cuál es el orden de los <span>equipos más grandes</span> del FPC?</div>
             <div class="linea"></div>
-            <div class="sub">Dale un valor del 1 al 10 a cada copa y descubre el ranking según tu criterio.</div>
+            <div class="sub">Toma la Liga Anual como base, dinos cuántas Ligas Anuales vale cada copa y descubre el ranking según tu criterio.</div>
         </div>''',
         unsafe_allow_html=True,
     )
-    _, centro, _ = st.columns([1, 1.4, 1])
+    _, centro, _ = st.columns([1, 1, 1])
     with centro:
         if st.button("Comenzar", key="comenzar"):
             st.session_state.paso = 0
@@ -203,27 +230,46 @@ elif st.session_state.paso < len(TORNEOS):
             st.markdown(f'<div class="placeholder">Falta la imagen<br>{archivo}</div>',
                         unsafe_allow_html=True)
 
-    st.markdown('<div class="instruccion">Selecciona un número del 1 al 10</div>', unsafe_allow_html=True)
+    es_base = (nombre == "Liga Anual")
+    previo = st.session_state.pesos.get(nombre)
 
-    _, centro, _ = st.columns([1, 3, 1])
+    if es_base:
+        st.markdown(
+            '<div class="instruccion">La Liga Anual es la base del ranking: <b>1 título = 1 punto</b></div>',
+            unsafe_allow_html=True,
+        )
+    else:
+        st.markdown(
+            f'<div class="instruccion">¿Cuántas Ligas Anuales vale la <b>{nombre}</b>?</div>'
+            '<div class="ejemplos">Ejemplos: <b>0,5</b> = media Liga Anual · <b>1</b> = igual que una · '
+            '<b>3</b> = tres Ligas Anuales · rango de 0,1 a 10</div>',
+            unsafe_allow_html=True,
+        )
+
+    _, centro, _ = st.columns([1, 4, 1])
     with centro:
         with st.form(key=f"form_{i}", border=False):
-            c1, c2 = st.columns([1, 1.4])
-            valor = c1.number_input("Valor", min_value=1, max_value=10, value=None, step=1,
-                                    placeholder="1–10", label_visibility="collapsed")
-            confirmar = c2.form_submit_button("Confirmar")
-
-        if confirmar:
-            if valor is None:
-                st.warning("Escribe un número del 1 al 10.")
+            c_ant, c_val, c_ok = st.columns([1, 1, 1])
+            anterior = c_ant.form_submit_button("← Anterior")
+            if es_base:
+                c_val.markdown('<div class="caja-base">= 1</div>', unsafe_allow_html=True)
+                texto = "1"
             else:
-                st.session_state.pesos[nombre] = int(valor)
-                st.session_state.paso += 1
-                st.rerun()
+                texto = c_val.text_input("Puntuación", value=fmt(previo) if previo else "",
+                                         placeholder="0,1 – 10", label_visibility="collapsed", key=f"txt_{i}")
+            confirmar = c_ok.form_submit_button("Confirmar")
 
-        if st.button("← Anterior", key=f"atras_{i}"):
+        if anterior:
             st.session_state.paso -= 1
             st.rerun()
+        if confirmar:
+            valor = leer_numero(texto)
+            if valor is None or not (0.1 <= valor <= 10):
+                st.warning("Escribe un número entre 0,1 y 10 (puedes usar coma, por ejemplo 0,5).")
+            else:
+                st.session_state.pesos[nombre] = valor
+                st.session_state.paso += 1
+                st.rerun()
 
 # ---------------------------------------------------------------
 # RESULTADO
@@ -248,10 +294,10 @@ else:
         for c in NOMBRES:
             t = int(f[c])
             clase = ' class="cero"' if t == 0 else ""
-            celdas += f"<td{clase}>{t} ({t * pesos[c]})</td>"
+            celdas += f"<td{clase}>{t} ({fmt(t * pesos[c])})</td>"
         filas += (
             f"<tr{clase_fila}><td><span class='pos'>{n + 1}</span>{f['Equipo']}</td>"
-            f"<td class='total'>{int(f['Puntos'])}</td>{celdas}</tr>"
+            f"<td class='total'>{fmt(f['Puntos'])}</td>{celdas}</tr>"
         )
     st.markdown(
         f'''<div class="tabla-wrap">
