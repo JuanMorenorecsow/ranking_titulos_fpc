@@ -221,15 +221,6 @@ elif st.session_state.paso < len(TORNEOS):
     if periodo:
         st.markdown(f'<div class="periodo">{periodo}</div>', unsafe_allow_html=True)
 
-    _, centro, _ = st.columns([1, 1.6, 1])
-    with centro:
-        ruta = buscar_imagen(archivo)
-        if ruta:
-            st.image(ruta, use_container_width=True)
-        else:
-            st.markdown(f'<div class="placeholder">Falta la imagen<br>{archivo}</div>',
-                        unsafe_allow_html=True)
-
     es_base = (nombre == "Liga Anual")
     previo = st.session_state.pesos.get(nombre)
 
@@ -245,6 +236,15 @@ elif st.session_state.paso < len(TORNEOS):
             '<b>3</b> = tres Ligas Anuales · rango de 0,1 a 10</div>',
             unsafe_allow_html=True,
         )
+
+    _, centro, _ = st.columns([1, 1.6, 1])
+    with centro:
+        ruta = buscar_imagen(archivo)
+        if ruta:
+            st.image(ruta, use_container_width=True)
+        else:
+            st.markdown(f'<div class="placeholder">Falta la imagen<br>{archivo}</div>',
+                        unsafe_allow_html=True)
 
     _, centro, _ = st.columns([1, 4, 1])
     with centro:
