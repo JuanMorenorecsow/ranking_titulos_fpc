@@ -10,8 +10,8 @@ st.set_page_config(page_title="Ranking por Títulos del FPC", page_icon="🏆", 
 # TORNEOS: (nombre, organizador, archivo de imagen en /imagenes)
 # ---------------------------------------------------------------
 TORNEOS = [
-    ("Liga Anual",          "FPC · DIMAYOR", "liga_anual.png", "Temporadas 1948 – 2001"),
     ("Liga Semestral",      "FPC · DIMAYOR", "liga_semestral.png", "Temporadas 2002 – presente"),
+    ("Liga Anual",          "FPC · DIMAYOR", "liga_anual.png", "Temporadas 1948 – 2001"),
     ("Copa Colombia",       "FPC · DIMAYOR", "copa_colombia.png", ""),
     ("Superliga",           "FPC · DIMAYOR", "superliga.png", ""),
     ("Copa Libertadores",   "CONMEBOL",      "libertadores.png", ""),
@@ -56,15 +56,15 @@ def buscar_imagen(archivo):
 # ⚠️ Cifras de referencia: verifícalas y corrígelas aquí.
 # ---------------------------------------------------------------
 DATOS = {
-    "Atlético Nacional":      [7, 11, 4, 3, 2, 0, 1],
-    "Millonarios":            [14, 3, 1, 1, 0, 0, 0],
-    "Independiente Santa Fe": [5, 3, 1, 2, 0, 1, 1],
-    "Junior":                 [4, 5, 2, 3, 0, 0, 0],
-    "América de Cali":        [13, 3, 0, 0, 0, 0, 0],
-    "Deportivo Cali":         [4, 2, 1, 0, 0, 0, 0],
-    "Once Caldas":            [0, 3, 0, 0, 1, 0, 0],
-    "Independiente Medellín": [2, 3, 0, 1, 0, 0, 0],
-    "Deportes Tolima":        [1, 3, 0, 1, 0, 0, 0],
+    "Atlético Nacional":      [11, 7, 4, 3, 2, 0, 1],
+    "Millonarios":            [3, 14, 1, 1, 0, 0, 0],
+    "Independiente Santa Fe": [3, 5, 1, 2, 0, 1, 1],
+    "Junior":                 [5, 4, 2, 3, 0, 0, 0],
+    "América de Cali":        [3, 13, 0, 0, 0, 0, 0],
+    "Deportivo Cali":         [2, 4, 1, 0, 0, 0, 0],
+    "Once Caldas":            [3, 0, 0, 0, 1, 0, 0],
+    "Independiente Medellín": [3, 2, 0, 1, 0, 0, 0],
+    "Deportes Tolima":        [3, 1, 0, 1, 0, 0, 0],
 }
 
 # ---------------------------------------------------------------
@@ -202,7 +202,7 @@ if st.session_state.paso == -1:
             <div class="eyebrow">FPC · DIMAYOR</div>
             <div class="titulo">¿Cuál es el orden de los <span>equipos más grandes</span> del FPC?</div>
             <div class="linea"></div>
-            <div class="sub">Toma la Liga Anual como base, dinos cuántas Ligas Anuales vale cada copa y descubre el ranking según tu criterio.</div>
+            <div class="sub">Toma la Liga Semestral como base, dinos cuántas Ligas Semestrales vale cada copa y descubre el ranking según tu criterio.</div>
         </div>''',
         unsafe_allow_html=True,
     )
@@ -221,19 +221,19 @@ elif st.session_state.paso < len(TORNEOS):
     if periodo:
         st.markdown(f'<div class="periodo">{periodo}</div>', unsafe_allow_html=True)
 
-    es_base = (nombre == "Liga Anual")
+    es_base = (nombre == "Liga Semestral")
     previo = st.session_state.pesos.get(nombre)
 
     if es_base:
         st.markdown(
-            '<div class="instruccion">La Liga Anual es la base del ranking: <b>1 título = 1 punto</b></div>',
+            '<div class="instruccion">La Liga Semestral es la base del ranking: <b>1 título = 1 punto</b></div>',
             unsafe_allow_html=True,
         )
     else:
         st.markdown(
-            f'<div class="instruccion">¿Cuántas Ligas Anuales vale la <b>{nombre}</b>?</div>'
-            '<div class="ejemplos">Ejemplos: <b>0,5</b> = media Liga Anual · <b>1</b> = igual que una · '
-            '<b>3</b> = tres Ligas Anuales · rango de 0,1 a 10</div>',
+            f'<div class="instruccion">¿Cuántas Ligas Semestrales vale la <b>{nombre}</b>?</div>'
+            '<div class="ejemplos">Ejemplos: <b>0,5</b> = media Liga Semestral · <b>1</b> = igual que una · '
+            '<b>3</b> = tres Ligas Semestrales · rango de 0,1 a 10</div>',
             unsafe_allow_html=True,
         )
 
@@ -252,7 +252,7 @@ elif st.session_state.paso < len(TORNEOS):
             c_ant, c_val, c_ok = st.columns([1, 1, 1])
             anterior = c_ant.form_submit_button("← Anterior")
             if es_base:
-                c_val.markdown('<div class="caja-base">= 1</div>', unsafe_allow_html=True)
+                c_val.markdown('<div class="caja-base">1</div>', unsafe_allow_html=True)
                 texto = "1"
             else:
                 texto = c_val.text_input("Puntuación", value=fmt(previo) if previo else "",
