@@ -56,27 +56,40 @@ def buscar_imagen(archivo):
 # Fuente: CampeonesColombianos_Serio.xlsx (Ligas separadas en Anual 1948–2001 y Semestral 2002–).
 # ---------------------------------------------------------------
 DATOS = {
-    "Atlético Nacional":      [11, 7, 8, 4, 2, 0, 1, 0],
-    "Millonarios":            [3, 13, 3, 2, 0, 0, 0, 0],
-    "Independiente Santa Fe": [4, 6, 2, 5, 0, 1, 0, 0],
-    "Junior":                 [8, 4, 2, 2, 0, 0, 0, 0],
-    "América de Cali":        [4, 11, 0, 0, 0, 0, 0, 0],
-    "Deportivo Cali":         [3, 7, 1, 1, 0, 0, 0, 0],
-    "Independiente Medellín": [4, 2, 3, 0, 0, 0, 0, 0],
-    "Once Caldas":            [4, 1, 0, 0, 1, 0, 0, 0],
-    "Deportes Tolima":        [3, 0, 1, 1, 0, 0, 0, 0],
-    "La Equidad":             [1, 0, 1, 0, 0, 0, 0, 0],
-    "Boca Juniors de Cali":   [1, 0, 1, 0, 0, 0, 0, 0],
-    "Deportivo Pasto":        [1, 0, 0, 0, 0, 0, 0, 0],
-    "Deportes Quindío":       [0, 1, 0, 0, 0, 0, 0, 0],
-    "Cúcuta Deportivo":       [1, 0, 0, 0, 0, 0, 0, 0],
-    "Atlético Bucaramanga":   [1, 0, 0, 0, 0, 0, 0, 0],
-    "Unión Magdalena":        [0, 1, 0, 0, 0, 0, 0, 0],
-    "Boyacá Chicó":           [1, 0, 0, 0, 0, 0, 0, 0],
-    "Deportivo Pereira":      [1, 0, 0, 0, 0, 0, 0, 0],
-    "Atlético Huila":         [1, 0, 0, 0, 0, 0, 0, 0],
-    "Real Cartagena":         [1, 0, 0, 0, 0, 0, 0, 0],
+    "Atlético Nacional":      [11, 7, 8, 4, 2, 0, 1],
+    "Millonarios":            [3, 13, 3, 2, 0, 0, 0],
+    "Independiente Santa Fe": [4, 6, 2, 5, 0, 1, 0],
+    "Junior":                 [8, 4, 2, 2, 0, 0, 0],
+    "América de Cali":        [4, 11, 0, 0, 0, 0, 0],
+    "Deportivo Cali":         [3, 7, 1, 1, 0, 0, 0],
+    "Independiente Medellín": [4, 2, 3, 0, 0, 0, 0],
+    "Once Caldas":            [4, 1, 0, 0, 1, 0, 0],
+    "Deportes Tolima":        [3, 0, 1, 1, 0, 0, 0],
+    "La Equidad":             [1, 0, 1, 0, 0, 0, 0],
+    "Boca Juniors de Cali":   [1, 0, 1, 0, 0, 0, 0],
+    "Deportivo Pasto":        [1, 0, 0, 0, 0, 0, 0],
+    "Deportes Quindío":       [0, 1, 0, 0, 0, 0, 0],
+    "Cúcuta Deportivo":       [1, 0, 0, 0, 0, 0, 0],
+    "Atlético Bucaramanga":   [1, 0, 0, 0, 0, 0, 0],
+    "Unión Magdalena":        [0, 1, 0, 0, 0, 0, 0],
+    "Boyacá Chicó":           [1, 0, 0, 0, 0, 0, 0],
+    "Deportivo Pereira":      [1, 0, 0, 0, 0, 0, 0],
+    "Atlético Huila":         [1, 0, 0, 0, 0, 0, 0],
+    "Real Cartagena":         [1, 0, 0, 0, 0, 0, 0],
 }
+
+
+def tabla_datos():
+    """Arma la tabla de títulos. Cada equipo necesita exactamente un número por copa de TORNEOS."""
+    malas = {e: len(v) for e, v in DATOS.items() if len(v) != len(NOMBRES)}
+    if malas:
+        st.error(
+            f"Cada equipo debe tener {len(NOMBRES)} números (uno por copa, en este orden: "
+            f"{', '.join(NOMBRES)}). Revisa estos equipos en DATOS: "
+            + ", ".join(f"{e} ({n} números)" for e, n in malas.items())
+        )
+        st.stop()
+    return pd.DataFrame.from_dict(DATOS, orient="index", columns=NOMBRES)
 
 # ---------------------------------------------------------------
 # ESTILO
@@ -296,7 +309,7 @@ else:
     encabezado("FPC", "Ranking por Títulos")
 
     pesos = st.session_state.pesos
-    df = pd.DataFrame(DATOS, index=NOMBRES).T
+    df = tabla_datos()
     df["Puntos"] = sum(df[t] * p for t, p in pesos.items())
     df = df.sort_values("Puntos", ascending=False).reset_index(names="Equipo")
 
