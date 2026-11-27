@@ -17,7 +17,6 @@ TORNEOS = [
     ("Copa Libertadores",   "CONMEBOL",      "libertadores.png", ""),
     ("Copa Sudamericana",   "CONMEBOL",      "sudamericana.png", ""),
     ("Recopa Sudamericana", "CONMEBOL",      "recopa.png", ""),
-    ("Copa Intercontinental", "FIFA",         "intercontinental.png", ""),
 ]
 CARPETA_IMG = "imagenes"
 NOMBRES = [t[0] for t in TORNEOS]
