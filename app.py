@@ -17,6 +17,7 @@ TORNEOS = [
     ("Copa Libertadores",   "CONMEBOL",      "libertadores.png", ""),
     ("Copa Sudamericana",   "CONMEBOL",      "sudamericana.png", ""),
     ("Recopa Sudamericana", "CONMEBOL",      "recopa.png", ""),
+    ("Copa Intercontinental", "FIFA",         "intercontinental.png", ""),
 ]
 CARPETA_IMG = "imagenes"
 NOMBRES = [t[0] for t in TORNEOS]
@@ -53,18 +54,29 @@ def buscar_imagen(archivo):
 
 # ---------------------------------------------------------------
 # DATOS: títulos por equipo, en el mismo orden de TORNEOS.
-# ⚠️ Cifras de referencia: verifícalas y corrígelas aquí.
+# Fuente: CampeonesColombianos_Serio.xlsx (Ligas separadas en Anual 1948–2001 y Semestral 2002–).
 # ---------------------------------------------------------------
 DATOS = {
-    "Atlético Nacional":      [11, 7, 4, 3, 2, 0, 1],
-    "Millonarios":            [3, 14, 1, 1, 0, 0, 0],
-    "Independiente Santa Fe": [3, 5, 1, 2, 0, 1, 1],
-    "Junior":                 [5, 4, 2, 3, 0, 0, 0],
-    "América de Cali":        [3, 13, 0, 0, 0, 0, 0],
-    "Deportivo Cali":         [2, 4, 1, 0, 0, 0, 0],
-    "Once Caldas":            [3, 0, 0, 0, 1, 0, 0],
-    "Independiente Medellín": [3, 2, 0, 1, 0, 0, 0],
-    "Deportes Tolima":        [3, 1, 0, 1, 0, 0, 0],
+    "Atlético Nacional":      [11, 7, 8, 4, 2, 0, 1, 0],
+    "Millonarios":            [3, 13, 3, 2, 0, 0, 0, 0],
+    "Independiente Santa Fe": [4, 6, 2, 5, 0, 1, 0, 0],
+    "Junior":                 [8, 4, 2, 2, 0, 0, 0, 0],
+    "América de Cali":        [4, 11, 0, 0, 0, 0, 0, 0],
+    "Deportivo Cali":         [3, 7, 1, 1, 0, 0, 0, 0],
+    "Independiente Medellín": [4, 2, 3, 0, 0, 0, 0, 0],
+    "Once Caldas":            [4, 1, 0, 0, 1, 0, 0, 0],
+    "Deportes Tolima":        [3, 0, 1, 1, 0, 0, 0, 0],
+    "La Equidad":             [1, 0, 1, 0, 0, 0, 0, 0],
+    "Boca Juniors de Cali":   [1, 0, 1, 0, 0, 0, 0, 0],
+    "Deportivo Pasto":        [1, 0, 0, 0, 0, 0, 0, 0],
+    "Deportes Quindío":       [0, 1, 0, 0, 0, 0, 0, 0],
+    "Cúcuta Deportivo":       [1, 0, 0, 0, 0, 0, 0, 0],
+    "Atlético Bucaramanga":   [1, 0, 0, 0, 0, 0, 0, 0],
+    "Unión Magdalena":        [0, 1, 0, 0, 0, 0, 0, 0],
+    "Boyacá Chicó":           [1, 0, 0, 0, 0, 0, 0, 0],
+    "Deportivo Pereira":      [1, 0, 0, 0, 0, 0, 0, 0],
+    "Atlético Huila":         [1, 0, 0, 0, 0, 0, 0, 0],
+    "Real Cartagena":         [1, 0, 0, 0, 0, 0, 0, 0],
 }
 
 # ---------------------------------------------------------------
