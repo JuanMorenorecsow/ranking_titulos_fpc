@@ -63,7 +63,7 @@ DATOS = {
     "América de Cali":        [4, 11, 0, 0, 0, 0, 0],
     "Deportivo Cali":         [3, 7, 1, 1, 0, 0, 0],
     "Independiente Medellín": [4, 2, 3, 0, 0, 0, 0],
-    "Once Caldas":            [4, 1, 0, 0, 1, 0, 0],
+    "Once Caldas":            [3, 1, 0, 0, 1, 0, 0],
     "Deportes Tolima":        [3, 0, 1, 1, 0, 0, 0],
     "La Equidad":             [1, 0, 1, 0, 0, 0, 0],
     "Boca Juniors de Cali":   [1, 0, 1, 0, 0, 0, 0],
